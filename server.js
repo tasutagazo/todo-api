@@ -32,14 +32,9 @@ app.get('/todos/:id', function(req, res){
 app.post('/todos', function(req, res){
 	var body = req.body;
 	//add id field
-	body.id = todoNextID;
-	if(body.id = todoNextID){
-		todoNextID++
-	}
-	console.log(todoNextID);
+	body.id = todoNextID++;
 	// push body into array
 	todos.push(body)
-	console.log(todos)
 	console.log('description ' + body.description);
 	res.json(body);
 });
