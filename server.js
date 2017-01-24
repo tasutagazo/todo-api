@@ -28,8 +28,6 @@ app.get('/todos/:id', function(req, res){
 // POST /Todos/:id
 app.post('/todos', function(req, res){
 	var body = _.pick(req.body,'description', 'completed');
-
-
 	
 	if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
 		return res.status(400).send();
@@ -43,8 +41,17 @@ app.post('/todos', function(req, res){
 	res.json(body);
 });
 
-
-
+// DELETE /todos/:id
+app.delete('/todos/:id', function(req, res){
+	var toDeleteID = parseInt(req.params.id, 10)
+	var matchedToDelete = _.findWhere(todos, {id: toDeleteID})
+	if(!matchedToDelete){
+		res.status(400).json("error": "no to do found with that id");
+	} else {
+		todos = _.without(todos, matchedToDelete)
+		res.json(matchedToDelete);	
+	}
+});
 
 app.listen(PORT, function(){
 	console.log('Express listening on port ' + PORT)
