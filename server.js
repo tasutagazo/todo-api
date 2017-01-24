@@ -12,6 +12,7 @@ app.get('/', function(req, res){
 })
 app.use(bodyParser.json());
 // GET /todos
+
 app.get('/todos', function(req, res){
 	res.json(todos);
 });
@@ -43,13 +44,13 @@ app.post('/todos', function(req, res){
 
 // DELETE /todos/:id
 app.delete('/todos/:id', function(req, res){
-	var toDeleteID = parseInt(req.params.id, 10)
-	var matchedToDelete = _.findWhere(todos, {id: toDeleteID})
-	if(!matchedToDelete){
-		res.status(400).json("error": "no to do found with that id");
+	var todoID = parseInt(req.params.id, 10)
+	var matchedTodo = _.findWhere(todos, {id: todoID})
+	if(!matchedTodo){
+		res.status(400).json("error", "no to do found with that id");
 	} else {
-		todos = _.without(todos, matchedToDelete)
-		res.json(matchedToDelete);	
+		todos = _.without(todos, matchedTodo)
+		res.json(matchedTodo);	
 	}
 });
 
