@@ -1,8 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
-
-
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todos = [];
@@ -16,13 +14,18 @@ app.use(bodyParser.json());
 app.get('/todos', function(req, res){
 	var queryParams = req.query;
 	var filteredTodos = todos;
-	// if has property & completed === true
-		if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
-			filteredTodos = _.where(filteredTodos, {completed: true});
-		} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
-			filteredTodos = _.where(filteredTodos, {completed: false});
-		} 
-
+	if(queryParams.hasOwnProperty('completed') && queryParams.completed === 'true'){
+		filteredTodos = _.where(filteredTodos, {completed: true});
+		
+	} else if (queryParams.hasOwnProperty('completed') && queryParams.completed === 'false'){
+		filteredTodos = _.where(filteredTodos, {completed: false});
+	} 
+	if(queryParams.hasOwnProperty('q') & queryParams.q.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function(todo)
+			{return todo.description.toLowerCase().indexOf(queryParams.q) > -1}
+		);
+	};
+	
 	res.json(filteredTodos);
 });
 // GET /todos/:id
@@ -42,10 +45,8 @@ app.post('/todos', function(req, res){
 	if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
 		return res.status(400).send();
 	};
-	body.description = body.description.trim()
-	//add id field		
+	body.description = body.description.trim()	
 	body.id = todoNextID++;
-	// push body into array
 	todos.push(body)
 	console.log('description: ' + body.description);
 	res.json(body);
@@ -85,6 +86,7 @@ app.put('/todos/:id', function(req, res){
 	_.extend(matchedTodo, validAttributes);
 	res.json(matchedTodo);
 });
+
 app.listen(PORT, function(){
 	console.log('Express listening on port ' + PORT)
 })
